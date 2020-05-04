@@ -1,88 +1,68 @@
-library(shiny)
-library(Seurat)
-library(tidyverse)
-library(ggplot2)
-library(dplyr)
-library(gameofthrones)
+# ==========================================================
+# Load libraries and scripts
+# ==========================================================
+source("source.R")
 
 
-## 0. Data loading
-data <- readRDS(file = "expDat.rds")
-
-# expDat <- vroom::vroom(expDat.tsv)
-
-
-
-## 1. tSNE plot
-
-
-## 2. Heatmap
-
-
-## 3. Lineplot
-lineplot <- function(data, cell, gene){ 
-     ggplot(data, aes(fill=Gene, y=log.exp, x=Time, group = Gene)) + 
-          geom_point(aes(colour = Gene)) +
-          geom_line(aes(colour = Gene), size = 1.2)+
-          scale_color_got(discrete = TRUE, option = "Daenerys")+
-          theme_minimal()
-}
-
-
-
-
-
-## 4. ShinyApp setup
-
-plotType <- c("tSNE","Heatmap","Lineplot")
+# =======================================================
+# Define UI
+# ========================================================
 ui <- fluidPage(
      titlePanel("Drosohila Developmental Single-cell Atlas, 2020 (beta ver.)"),
+                #img(src="xx.png", height=. width = "100%")),
+     
      sidebarLayout(
           # inputs
           sidebarPanel(
                textInput("cell",label = "Cell type"),
                textInput("gene",label = "Gene"),
-               radioButtons("rb", "Plot",
-                            choiceNames = list("tSNE","Heatmap","Lineplot"),
-                            choiceValues = list("tSNE","heatmap","lineplot")
-               ),
-               actionButton("click","Plot")
+
+               helpText("tSNE: gene expression in clusters",
+                        "Heatmap: compare gene expression in all neurons",
+                        "Lineplot: gene expression trajectory within a cell type"),
+               
+               submitButton("Plot")
           ),
-          # outputs
-          mainPanel(
-               plotOutput("lineplot", width = "100%")
-               # x1 <- eventReactive(input$click,{
-               #     input$gene, input$celltype, input$plot
-               # })
+          
+               tabsetPanel(
+                    tabPanel("tSNE", plotOutput("tsne")), 
+                    tabPanel("Heatmap", plotOutput("heatmap", height = "100px")), 
+                    tabPanel("Line", plotOutput("lineplot"))
+               )
           )
      )
-)
 
 
+
+
+# =======================================================
+# Define server logic
+# ========================================================
 server <- function(input, output, session) {
-     # back end logic
-     pdat_line <- reactive(data %>% filter(Cell == input$cell) %>% filter(Gene %in% input$gene))
-     pdat_heat <- reactive(data %>% filter(Gene %in% input$gene))
+#     genes <- unlist(strsplit(input$gene, ","))
      
-     if(input$Plot == "lineplot"){
+     output$tsne <- renderPlot({
+          FeaturePlot(dataTSNE, features = input$gene, label = T)+
+               theme_void()
+          
+     })
+         
+     output$heatmap <- renderPlot({
+          ggplot(dataExpr %>% filter(gene == input$gene), aes(fill=expr,x=type1,y=gene)) +
+               geom_tile(aes(fill = expr), colour='grey50')+ 
+               theme(axis.text.x = element_text(angle=90), hjust=1)
+     })
+     
      output$lineplot <- renderPlot({
-          ggplot(pdat_line(), aes(fill=Gene, y=log.exp, x=Time, group = Gene)) + 
-               geom_point(aes(colour = Gene)) +
-               geom_line(aes(colour = Gene), size = 1.2)+
-               scale_color_got(discrete = TRUE, option = "Daenerys")+
+          ggplot(dataExpr %>% filter(type1 == input$cell), aes(x = time, y=expr,fill=gene,group=gene))+
+               geom_point() +
+               geom_line() +
                theme_minimal()
      })
-     }
-     
-#     if(input$Plot == "heatmap"){
-#     output$heatmap <- renderPlot({
-#          ggplot(pdat_heat(), aes(fill=log.exp, y=Gene, x=Time))+
-#               geom_tile()+
-#               theme_classic()
-#     })
-#     }
-     
+
 }
 
-shinyApp(ui, server)
 
+
+
+shinyApp(ui, server)
