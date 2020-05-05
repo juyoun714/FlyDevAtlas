@@ -3,10 +3,8 @@
 # ==================================
 library(shiny)
 library(Seurat)
-library(tidyverse)
 library(ggplot2)
 library(dplyr)
-library(gameofthrones)
 
 # get just tSNE coordinates to plot later
 #dataA.light <- readRDS("data/dataA.light.rds")
