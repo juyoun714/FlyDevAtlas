@@ -20,7 +20,7 @@ library(gameofthrones)
 # ====================================================== 
 # Data loading
 # ======================================================
-dataTSNE <- readRDS(file = "data/dataA.light.rds")
+#dataTSNE <- readRDS(file = "data/dataA.light.rds")
 dataExpr <- readRDS(file = "data/dataExpr.rds")
 
 
@@ -38,10 +38,10 @@ dataExpr <- readRDS(file = "data/dataExpr.rds")
 # 1. tSNE plot
 # 2. Heatmap
 # 3. Lineplot
-lineplot <- function(data, cell, gene){ 
-     ggplot(data, aes(fill=Gene, y=log.exp, x=Time, group = Gene)) + 
-          geom_point(aes(colour = Gene)) +
-          geom_line(aes(colour = Gene), size = 1.2)+
-          scale_color_got(discrete = TRUE, option = "Daenerys")+
-          theme_minimal()
-}
+#lineplot <- function(data, cell, gene){ 
+#     ggplot(data, aes(fill=Gene, y=log.exp, x=Time, group = Gene)) + 
+#          geom_point(aes(colour = Gene)) +
+#          geom_line(aes(colour = Gene), size = 1.2)+
+#          scale_color_got(discrete = TRUE, option = "Daenerys")+
+#          theme_minimal()
+#}
