@@ -6,15 +6,6 @@ library(Seurat)
 library(ggplot2)
 library(dplyr)
 
-# get just tSNE coordinates to plot later
-#dataA.light <- readRDS("data/dataA.light.rds")
-#exprAB.1 <- readRDS("data/exprAB.1.rds")
-
-#tmp0<- FetchData(dataA.light, vars = c("set","rep","time","sample","class1","type1","tSNE_1", "tSNE_2"))
-
-#dataA.light.tsne <- tmp0
-#saveRDS(dataA.light.tsne, file = "data/dataA.light.tsne.rds")
-
 # ====================================================== 
 # Data loading
 # ======================================================
@@ -26,7 +17,6 @@ cordTSNE <- readRDS(file = "data/cordTSNE.rds")
 # =======================================================
 # ui variables
 # =======================================================
-# plotType <- c("tSNE","Heatmap","Lineplot")
 
 
 
